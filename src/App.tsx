@@ -12,6 +12,7 @@ import Transactions from "./pages/Transactions/Transactions";
 import Profile from "./pages/Profile/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Provider from "./Provider";
+import Payment from "./pages/Payment/Payment";
 
 function App() {
   return (
@@ -33,6 +34,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <TopUp />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoute>
+                <Payment />
               </ProtectedRoute>
             }
           />

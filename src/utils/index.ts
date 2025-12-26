@@ -1,4 +1,4 @@
-export const formatIDR = (value: number | string): string => {
+export const formatCurrency = (value: number | string): string => {
   const num = typeof value === "string" ? parseFloat(value) : value;
   if (isNaN(num)) return "0";
   return new Intl.NumberFormat("id-ID").format(num);
@@ -9,13 +9,23 @@ export const maskBalance = (
   isVisible: boolean,
   maskAmount?: number
 ): string => {
-  if (isVisible) return formatIDR(value);
+  if (isVisible) return formatCurrency(value);
 
   const dot = "●";
   if (maskAmount !== undefined) {
     return dot.repeat(maskAmount);
   }
 
-  const formattedStr = formatIDR(value);
+  const formattedStr = formatCurrency(value);
   return dot.repeat(formattedStr.length);
+};
+
+export const convertDate = (date: string): string => {
+  const currentDate = new Date(date);
+  const localTime = currentDate.toLocaleString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    dateStyle: "long",
+    timeStyle: "short",
+  });
+  return localTime.replace("pukul ", "");
 };

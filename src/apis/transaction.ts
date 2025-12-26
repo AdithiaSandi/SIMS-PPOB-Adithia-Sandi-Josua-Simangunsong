@@ -13,7 +13,7 @@ export const getBalance = async () => {
 
 export const topUpBalance = async (payload: { top_up_amount: number }) => {
   return postMethod<typeof payload, TApiResponse<{ balance: number }>>(
-    "/top-up",
+    "/topup",
     payload
   );
 };
@@ -24,7 +24,7 @@ export type TransactionItem = Pick<
 > &
   Omit<TransactionHistory, "description">;
 
-const baseUrlTransaction = "/transactions";
+const baseUrlTransaction = "/transaction";
 export const addTransaction = async (payload: { service_code: string }) => {
   return postMethod<typeof payload, TApiResponse<TransactionItem>>(
     baseUrlTransaction,
@@ -32,15 +32,17 @@ export const addTransaction = async (payload: { service_code: string }) => {
   );
 };
 
+export type TransactionType = "PAYMENT" | "TOPUP";
+
 export type TransactionHistory = {
   invoice_number: string;
-  transaction_type: string;
+  transaction_type: TransactionType;
   description: string;
   total_amount: number;
   created_on: string;
 };
 
-export const getTransactions = async (params: TPaginationParam) => {
+export const getAllTransactions = async (params: TPaginationParam) => {
   return getMethod<TApiResponsePagination<TransactionHistory[]>>(
     `${baseUrlTransaction}/history`,
     { params }

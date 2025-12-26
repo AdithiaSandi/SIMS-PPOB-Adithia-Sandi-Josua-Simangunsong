@@ -7,7 +7,6 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated } = useAppSelector(selectAuth);
   const location = useLocation();
 
-  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated);
   if (!isAuthenticated) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }

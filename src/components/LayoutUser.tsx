@@ -10,8 +10,18 @@ import { getBalance } from "../apis/transaction";
 import { EyeIcon } from "lucide-react";
 import { useState } from "react";
 import { maskBalance } from "../utils";
+import { membershipQueryKeys, transactionQueryKeys } from "../utils/querykeys";
+import ScrollToTop from "./ScrollToTop";
 
-const LayoutUser = ({ children }: { children: React.ReactNode }) => {
+const LayoutUser = ({
+  children,
+  className,
+  withHeader = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  withHeader?: boolean;
+}) => {
   const navigate = useNavigate();
   const auth = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
@@ -19,7 +29,7 @@ const LayoutUser = ({ children }: { children: React.ReactNode }) => {
 
   const { data: profile, isLoading: loadingProfile } = useQuery({
     enabled: !!auth.token,
-    queryKey: ["profile"],
+    queryKey: membershipQueryKeys.profile,
     queryFn: async () => {
       const res = await getProfile();
       if (res.status > 299 || !res.data.data) return;
@@ -32,7 +42,7 @@ const LayoutUser = ({ children }: { children: React.ReactNode }) => {
 
   const { data: balance, isLoading: loadingBalance } = useQuery({
     enabled: !!auth.token,
-    queryKey: ["balance"],
+    queryKey: transactionQueryKeys.balance,
     queryFn: async () => {
       const res = await getBalance();
       if (res.status > 299 || !res.data.data) return;
@@ -41,8 +51,8 @@ const LayoutUser = ({ children }: { children: React.ReactNode }) => {
   });
 
   return (
-    <main>
-      <section className="w-full flex gap-5 justify-between items-center py-5 md:px-[10%] px-10 border-b border-gray-200 shadow-sm">
+    <main className="text-[#282627] min-h-screen flex flex-col">
+      <section className="w-full flex gap-5 justify-between items-center lg:py-5 max-lg:py-2 md:px-[10%] px-10 border-b border-gray-200 shadow-sm shrink-0">
         <div
           className="w-full flex gap-2 items-center cursor-pointer"
           onClick={() => navigate("/")}
@@ -57,63 +67,67 @@ const LayoutUser = ({ children }: { children: React.ReactNode }) => {
         </div>
       </section>
 
-      <section className="w-full py-5 md:px-[10%] px-10">
-        <div className="w-full flex items-center">
-          <div className="flex flex-col grow shrink max-w-[40%]">
-            {loadingProfile ? (
-              <div className="flex flex-col gap-2">
-                <Skeleton variant="circle" width={80} height={80} />
-                <Skeleton variant="text" width={200} />
-                <Skeleton variant="text" width={300} height={40} />
-              </div>
-            ) : (
-              <>
-                <img
-                  src={
-                    profile?.profile_image.includes("null")
-                      ? "/assets/Profile Photo.png"
-                      : profile?.profile_image
-                  }
-                  alt="Profile"
-                  className="w-20 h-20 rounded-full"
-                />
-                <p className="text-sm text-gray-500 font-medium pt-4">
-                  Selamat datang,
-                </p>
-                <p className="text-2xl font-bold">
-                  {profile?.first_name} {profile?.last_name}
-                </p>
-              </>
-            )}
-          </div>
-          <div className="flex flex-col gap-2 grow shrink rounded-xl bg-red-600 text-white p-5">
-            {loadingBalance ? (
-              <div className="flex flex-col gap-2">
-                <Skeleton variant="circle" width={80} height={80} />
-                <Skeleton variant="text" width={200} />
-                <Skeleton variant="text" width={300} height={40} />
-              </div>
-            ) : (
-              <>
-                <span className="text-sm w-fit">Saldo anda</span>
-                <span className="text-2xl w-fit">
-                  Rp {maskBalance(balance?.balance as number, toggleVisible, 6)}
-                </span>
-                <span
-                  className="text-xs flex gap-2 items-center cursor-pointer w-fit"
-                  onClick={() => setToggleVisible((prev) => !prev)}
-                >
-                  <span className="min-w-16">
-                    {toggleVisible ? "Tutup Saldo" : "Lihat Saldo"}
+      <section className="w-full lg:py-5 max-lg:py-2 md:px-[10%] px-10 flex-1 flex flex-col">
+        {withHeader && (
+          <div className="w-full flex items-center shrink-0">
+            <div className="flex flex-col grow shrink max-w-[40%]">
+              {loadingProfile ? (
+                <div className="flex flex-col gap-2 w-full">
+                  <Skeleton variant="circle" width={80} height={80} />
+                  <Skeleton variant="text" className="w-[60%]" />
+                  <Skeleton variant="text" className="w-[80%]" height={40} />
+                </div>
+              ) : (
+                <>
+                  <img
+                    src={
+                      profile?.profile_image.includes("null")
+                        ? "/assets/Profile Photo.png"
+                        : profile?.profile_image
+                    }
+                    alt="Profile"
+                    className="w-20 h-20 rounded-full"
+                  />
+                  <p className="text-sm pt-4">Selamat datang,</p>
+                  <p className="text-2xl font-semibold">
+                    {profile?.first_name} {profile?.last_name}
+                  </p>
+                </>
+              )}
+            </div>
+            <div className="flex flex-col gap-2 grow shrink rounded-xl bg-red-600 text-white p-5">
+              {loadingBalance ? (
+                <div className="flex flex-col gap-2 h-full justify-center w-full">
+                  <Skeleton variant="text" className="w-[40%]" height={20} />
+                  <Skeleton variant="text" className="w-[70%]" height={40} />
+                  <Skeleton variant="text" className="w-[30%]" height={20} />
+                </div>
+              ) : (
+                <>
+                  <span className="text-sm w-fit">Saldo anda</span>
+                  <span className="text-2xl w-fit font-semibold">
+                    Rp{" "}
+                    {maskBalance(balance?.balance as number, toggleVisible, 7)}
                   </span>
-                  <EyeIcon width={15} />
-                </span>
-              </>
-            )}
+                  <span
+                    className="text-xs flex gap-2 items-center cursor-pointer w-fit"
+                    onClick={() => setToggleVisible((prev) => !prev)}
+                  >
+                    <span className="min-w-16">
+                      {toggleVisible ? "Tutup Saldo" : "Lihat Saldo"}
+                    </span>
+                    <EyeIcon width={15} />
+                  </span>
+                </>
+              )}
+            </div>
           </div>
+        )}
+        <div className={clsx("flex-1 flex flex-col", className)}>
+          {children}
         </div>
-        {children}
       </section>
+      <ScrollToTop />
     </main>
   );
 };

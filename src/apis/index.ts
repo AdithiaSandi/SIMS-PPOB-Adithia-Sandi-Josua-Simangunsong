@@ -4,14 +4,23 @@ import { localStorageNamespace } from "../utils/constant";
 
 const instance = axios.create({
   baseURL: "https://take-home-test-api.nutech-integrasi.com",
-  // withCredentials: true,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${
-      localStorage.getItem(localStorageNamespace) || ""
-    }`,
   },
 });
+
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem(localStorageNamespace);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 instance.interceptors.response.use(
   (response) => response,
