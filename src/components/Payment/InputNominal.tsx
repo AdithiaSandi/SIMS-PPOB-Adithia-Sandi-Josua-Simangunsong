@@ -11,12 +11,14 @@ const InputNominal = ({
   onSubmit,
   withSuggestion = false,
   readOnly,
+  buttonText = "Top Up",
 }: {
   nominal?: number;
   onChange?: (e: number) => void;
   onSubmit?: () => void;
   withSuggestion?: boolean;
   readOnly?: boolean;
+  buttonText?: string;
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value.replaceAll(".", ""));
@@ -33,7 +35,7 @@ const InputNominal = ({
           readOnly={readOnly}
         />
         <Button variant="danger" disabled={!nominal} onClick={onSubmit}>
-          Top Up
+          {buttonText}
         </Button>
       </div>
       {withSuggestion && (

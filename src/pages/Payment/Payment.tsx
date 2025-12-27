@@ -89,7 +89,7 @@ const Payment = () => {
           <InputNominal
             nominal={service?.service_tariff}
             onSubmit={!service || pendingPayment ? undefined : handlePayment}
-            readOnly
+            buttonText="Bayar"
           />
         </div>
       )}
